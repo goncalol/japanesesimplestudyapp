@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<div style="text-align: center;">
+    <label for="group" style="font-size: 25px; font-weight: bold;">Escolhe o grupo:</label>
+    <select name="group" id="group" onchange="changeGroup()">
+        <option value="0">Vocabulário a aprender</option>
+        <option value="1">Vocabulário das lições</option>
+        <option value="2">Verbos</option>
+        <option value="3">Advérbios</option>
+        <option value="4">Comida</option>
+    </select>
+</div>
+
+<div style="text-align: center;">    
+    <h1 style="display: inline-block;" id="title">Japonês / Português</h1>
+    <button onclick="onSwap()">Swap</button>
+</div>
+
+<div style="text-align: center;">  
+    <p style="display: inline-block;text-align: center; font-size: 25px; font-weight: bold;" id="wordsCounter">10/10</p>
+    <button onclick="onReset()">Reset</button>
+</div>
+
+
+<p style="text-align: center; font-size: 70px; font-weight: bold;" id="hiragana">watashi</p>
+<p style="text-align: center; font-size: 70px; font-weight: bold;" id="romanji">eu</p>
+
+<button style="margin-left: 49%;" onclick="next()">Next</button>
+
+<div style="text-align: center;">
+
+    <button style="display: inline-block;" onclick="changeLevel()">Change Level</button>
+    &nbsp;
+    <p style="display: inline-block;font-weight: bold;" id="level">1</p>
+
+</div>
+
+</body>
+</html>
+
+<script>
+
+var hiragana = document.getElementById("hiragana");
+var romanji = document.getElementById("romanji");
+var title = document.getElementById("title");
+var lvlDisplay = document.getElementById("level");
+var wordCounter = document.getElementById("wordsCounter");
+
+var letterToShow;
+var swap=false;
+var currentStore=1;
+var currentGroupedStore=0;
+
+document.onkeydown = checkKey;
+
+function checkKey(e) {
+
+    e = e || window.event;
+
+    if (e.keyCode == '39') {
+        next();
+    }
+
+}
+
+function next(){
+    if(letterToShow!=undefined){
+        romanji.innerHTML = letterToShow;
+        letterToShow=undefined;
+        return;
+    }
+    var s = groupedStores[currentGroupedStore][currentStore-1].store;
+    var st = groupedStores[currentGroupedStore][currentStore-1].temp;
+    if(s.length!=0){
+        var rand = Math.floor(Math.random() * s.length )
+        st.push(s[rand]);
+        romanji.innerHTML = "";
+        hiragana.innerHTML = swap ? s[rand].r : s[rand].h;
+        letterToShow= swap ? s[rand].h : s[rand].r;
+        s.splice(rand, 1);
+        wordCounter.innerHTML = s.length+"/"+(s.length+st.length);
+    }
+    else alert("fim");
+}
+
+function changeLevel(){
+    currentStore++;
+    if(currentStore>groupedStores[currentGroupedStore].length){
+        currentStore=1;
+    }
+    lvlDisplay.innerHTML = currentStore;
+}
+
+function onSwap(){
+    swap = !swap;
+    if(swap){
+        title.innerHTML = "Português / Japonês"
+    }else
+        title.innerHTML = "Japonês / Português"
+}
+
+function onReset(){
+    
+    groupedStores[currentGroupedStore][currentStore-1].store = groupedStores[currentGroupedStore][currentStore-1].store.concat(groupedStores[currentGroupedStore][currentStore-1].temp);
+    groupedStores[currentGroupedStore][currentStore-1].temp=[];
+
+    var s1 = groupedStores[currentGroupedStore][currentStore-1].store;
+    var st1 = groupedStores[currentGroupedStore][currentStore-1].temp;
+    wordCounter.innerHTML = s1.length+"/"+(s1.length+st1.length);
+}
+
+function changeGroup(){    
+    currentGroupedStore = parseInt(document.getElementById("group").value);
+    currentStore=1;
+    lvlDisplay.innerHTML = currentStore;
+}
+
+var store=[
+{h:"watashi",r:"eu"},
+{h:"わたしはporutogaruじんです",r:"watashi WA porutogaru-jin desu"},
+{h:"watashi tachi",r:"nós"},
+{h:"anata",r:"tu/ele"},
+{h:"anata tachi",r:"Voces"},
+{h:"ano hito",r:"aquela pessoa"},
+{h:"minasan",r:"todos, senhores e senhoras"},
+{h:"kyoshi",r:"professor de primario"},
+{h:"gakusei",r:"estudante"},
+{h:"kaishain",r:"funcionario de empresa"},
+{h:"shain",r:"funcionario"},
+{h:"kaishai",r:"empresa"},
+{h:"ginkoin",r:"bancário"},
+{h:"isha",r:"medico"},
+{h:"kenkyusha",r:"investigador"},
+{h:"enjinia",r:"engenheiro"},
+{h:"daigaku",r:"faculdade"},
+{h:"byoin",r:"hospital"},
+{h:"denki",r:"eletricidade, luz"},
+{h:"dare",r:"quem? donata->forma polida"},
+{h:"nan-sai",r:"quantos anos? o ikutsu-> forma polida"},
+{h:"Porutogarugo",r:"lingua portuguesa"},
+{h:"Porutogarujin",r:"nacional portugues"},
+{h:"Ohayo gozaimasu",r:"Bom dia"},
+{h:"Hajimemashite",r:"Muito prazer - primeira vez"},
+{h:"Porutogaru kara kimashita",r:"eu vim de Portugal"},
+{h:"Dozo yoroshiku",r:"Prazer em conhecê-lo"},
+{h:"Shitsurei desuga",r:"Perdao, mas..."},
+{h:"O namae wa",r:"o seu nome é?"},
+{h:"Kochira wa Gonçalo-san desu",r:"este é o sr. Gonçalo"},
+];
+
+var storeTemp=[];
+
+var store2=[
+    {h:"kore",r:"isto"},
+    {h:"sore",r:"isso"},
+    {h:"are",r:"aquilo"},
+    {h:"kono",r:"este"},
+    {h:"sono",r:"esse"},
+    {h:"ano",r:"aquele"},
+    {h:"hon",r:"livro"},
+    {h:"jisho",r:"dicionario"},
+    {h:"zasshi",r:"revista"},
+    {h:"shinbun",r:"jornal"},
+    {h:"noto",r:"caderno"},
+    {h:"techo",r:"agenda"},
+    {h:"meishi",r:"cartao de visita"},
+    {h:"cado",r:"cartao"},
+    {h:"tegami",r:"carta"},
+    {h:"empitsu",r:"lapis"},
+    {h:"pen",r:"caneta"},
+    {h:"kagui",r:"chave"},
+    {h:"tokei",r:"relogio"},
+    {h:"kasa",r:"guarda-chuva"},
+    {h:"kaban",r:"mala"},
+    {h:"denwa",r:"telefone"},
+    {h:"ketai denwa",r:"telemovel"},
+    {h:"kuruma",r:"carro"},
+    {h:"tsukue",r:"secretaria"},
+    {h:"isu",r:"cadeira"},
+    {h:"kohii",r:"cafe"},
+    {h:"miyage",r:"lembrança"},
+    {h:"nan",r:"que, qual"},
+    {h:"so(u)",r:"é"},
+    {h:"Ano(u)",r:"bem...ahn..."},
+    {h:"E, nan desuka",r:"eh! o que é?"},
+    {h:"Dozo",r:"por favor / aqui está (para oferecer a alguem)"},
+    {h:"So desuka",r:"entendo/compreendo (para concordar)"},
+    {h:"Chigaimasu",r:"Não é. Está errado."},
+    {h:"Korekara osewa ni narimasu",r:"espero contar com a sua preciosa colaboração."},
+    {h:"kochirakoso",r:"igualmente"},
+    {h:"onegai-shimasu",r:"faça o favor"}
+]
+
+var storeTemp2=[];
+
+var store3=[
+    {h:"Koko",r:"aqui"},
+    {h:"Soko",r:"aí"},
+    {h:"Asoko",r:"ali"},
+    {h:"Kochira",r:"por aqui"},
+    {h:"Sochira",r:"por aí"},
+    {h:"Achira",r:"por ali"},
+    {h:"Doko",r:"onde"},
+    {h:"Dochira",r:"onde (forma polida)"},
+    {h:"Kyoushitsu",r:"sala de aula"},
+    {h:"shokudou",r:"cantina"},
+    {h:"jimusho",r:"escritório"},
+    {h:"kaigishitsu",r:"sala de reuniões"},
+    {h:"uketsuke",r:"recepção"},
+    {h:"robi",r:"lobby/salão"},
+    {h:"heya",r:"sala/quarto"},
+    {h:"toire",r:"casa de banho"},
+
+    {h:"かいだん",r:"escada"},
+    {h:"じどう　はんばいき",r:"maquina de venda"},
+    {h:"ねくたい",r:"gravata"},
+    {h:"わいん",r:"vinho"},
+    {h:"うち",r:"casa/lar"},
+    {h:"うりば",r:"local de venda/balcao"},
+    {h:"ちか",r:"subsolo"},
+    {h:"ろく　かい",r:"6º andar"},
+    {h:"なん　がい",r:"que andar?"},
+    {h:"いくら",r:"quanto custa?"},
+
+    {h:"すみません",r:"desculpe-me"},
+    {h:"ども",r:"obrigado"},
+    {h:"いらっしゃい",r:"bem vindo/ posso ajuda-lo"},
+    {h:"みせて　ください",r:"por favor, mostre-me"},
+    {h:"じゃ",r:"bem/nesse caso/entao"},
+    {h:"ください",r:"por favor dê-me..../ vou levar...."},
+    {h:"ごちそさま",r:"quando a refeicao acaba"},
+    {h:"いってきます。いってらっしゃい",r:"vou sair. ok adeus"},
+    {h:"ただいま。おかえり(なさい)",r:"cheguei. bem vindo"},
+    {h:"おやすみ　なさい",r:"boa noite(tipo dorme bem!)"},
+]
+
+var storeTemp3=[];
+
+var store4=[
+    {h:"おきます",r:"acordar"},
+    {h:"ねます",r:"dormir"},
+    {h:"はたらきます",r:"trabalhar"},
+    {h:"やすみます",r:"descansar"},
+    {h:"べんきょうします",r:"estudar"},
+    {h:"おわります",r:"terminar"},
+    {h:"depato",r:"centro comercial"},
+    {h:"としょかん",r:"biblioteca"},
+    {h:"びじゅつかん",r:"museu de arte"},
+    {h:"じ",r:"hora"},
+    {h:"はん　じ",r:"meia hora"},
+    {h:"ぷん",r:"minuto"},
+    {h:"なん　じ",r:"que horas"},
+    {h:"なん　ぷん",r:"quantos minutos"},
+    {h:"ごぜん",r:"A.M."},
+    {h:"ごご",r:"P.M."},
+    {h:"あさ",r:"manha"},
+    {h:"ひる",r:"meio dia"},
+    {h:"ばん",r:"noite"},
+    {h:"きょう",r:"hoje"},
+    {h:"きのう",r:"ontem"},
+    {h:"あした",r:"amanha"},
+    {h:"おととい",r:"anteontem"},
+    {h:"あさって",r:"depois de amanha"},
+    {h:"けさ",r:"esta manhã"},
+    {h:"こんばん",r:"esta noite"},
+    {h:"やすみ",r:"dia de descanso"},
+    {h:"ひるやすみ",r:"hora de almoço"},
+    {h:"しけん",r:"exame/teste"},
+    {h:"かいぎ",r:"reunião"},
+    {h:"かいぎ　を　します",r:"fazer/ter uma reunião"},
+    {h:"まいあさ",r:"todas as manhãs"},
+    {h:"まいばん",r:"todas as noites"},
+    {h:"まいにち",r:"todos os dias"},
+
+    {h:"げつ　ようび",r:"segunda feira"},
+    {h:"か　ようび",r:"terça feira"},
+    {h:"すい　ようび",r:"quarta feira"},
+    {h:"もく　ようび",r:"quinta feira"},
+    {h:"きん　ようび",r:"sexta feira"},
+    {h:"ど　ようび",r:"sabado"},
+    {h:"にち　ようび",r:"domingo"},
+    {h:"なん　ようび",r:"que dia da semana?"},
+
+    {h:"２０じ　かん",r:"20 horas de duração"},
+    {h:"N　から",r:"de N/ a partir de N"},
+    {h:"N　まで",r:"até N"},
+    {h:"N と　N",r:"e"},
+    {h:"たいへんですね。",r:"é dificil, nao é?"},
+    {h:"なん　ばん",r:"que numero?"},
+    {h:"ばんごう",r:"numero"},
+    // 1 min - いっぶん
+    // 2 min - にふん
+    // 3 min - さんぶん
+    // 4 min - よんぷん
+    // 5 min - ごふん
+    // 6 min - ろっぶん
+    // 7 min - ななふん
+    // 8 min - はっぶん
+    // 9 min - きゅうふん
+    // 10 min - じゅっぶん
+
+]
+
+var storeTemp4=[];
+
+var store5=[
+    {h:"いきます",r:"ir"},
+    {h:"きます",r:"vir"},
+    {h:"かえります",r:"voltar"},
+    {h:"スーパー",r:"supermercado"},
+    {h:"しんかんせん",r:"bullet train"},
+    {h:"バス",r:"autocarro"},
+    {h:"タクシー",r:"taxi"},
+    {h:"あるいて　（いきまし）",r:"ir a pé"},
+    {h:"ひと",r:"pessoa"},
+    {h:"ともだち",r:"amigo"},
+    {h:"かね",r:"namorado"},
+    {h:"かのじょ",r:"namorada"},
+    {h:"かぞく",r:"familia"},
+    {h:"ひとりで",r:"sozinho"},
+
+    {h:"せんしゅう",r:"semana passada"},
+    {h:"こんしゅう",r:"esta semana"},
+    {h:"らいしゅう",r:"proxima semana"},
+    {h:"さらいしゅう",r:"daqui a 2 semana"},
+    {h:"まいじゅう",r:"todas as semanas"},
+    {h:"せんげつ",r:"mês passado"},
+    {h:"こんげつ",r:"este mês"},
+    {h:"らいげつ",r:"proximo mês"},
+    {h:"さらいげつ",r:"daqui a 2 meses"},
+    {h:"まいつき",r:"todos os meses"},
+    {h:"きょねん",r:"ano passado"},
+    {h:"ことし",r:"este ano"},
+    {h:"らいねん",r:"proximo ano"},
+    {h:"さらいねん",r:"daqui a 2 anos"},
+    {h:"まいとし",r:"todos os anos"},
+    {h:"し　がつ",r:"4º mês"},
+    {h:"く　がつ",r:"9º mês"},
+    {h:"ろく　がつ",r:"６º mês"},
+    {h:"なん　がつ",r:"que mês?"},
+    {h:"なん　にち",r:"que dia do mês? / quantos dias?"},
+    {h:"いつ",r:"Quando"},
+    {h:"たんじょうび",r:"aniversário"},
+    // {h:"ひとりで",r:"comboio local"},
+    // {h:"ひとりで",r:"rapido"},
+    // {h:"ひとりで",r:"expresso"},
+    {h:"つぎの",r:"próximo"},
+    {h:"どういたしました",r:"(obrigado...) de nada!"},
+    {h:"ろく　ばんせん",r:"plataforma nº6"},
+    {h:"なんで / どうやって",r:"como vais a...?(transporte)"},
+
+    {h:"ついたち",r:"1º dia do mês"},
+    {h:"ふつか",r:"2º dia do mês"},
+    {h:"みっか",r:"3º dia do mês"},
+    {h:"よっか",r:"4º dia do mês"},
+    {h:"いつか",r:"5º dia do mês"},
+    {h:"むいか",r:"6º dia do mês"},
+    {h:"なのか",r:"7º dia do mês"},
+    {h:"ようか",r:"8º dia do mês"},
+    {h:"ここのか",r:"9º dia do mês"},
+    {h:"とおか",r:"10º dia do mês"},
+    {h:"じゅうよっか",r:"14º dia do mês"},
+    {h:"はつか",r:"20º dia do mês"},
+    {h:"にじゅうよっか",r:"24º dia do mês"},
+    {h:"にじゅうく　にち",r:"2９º dia do mês"},
+]
+
+var storeTemp5=[];
+
+var store6=[
+    {h:"すいます",r:"fumar"},
+    {h:"たばこ　を　すいます",r:"fumar um cigarro"},
+    {h:"のみまし",r:"beber"},
+    {h:"たべます",r:"comer"},
+    {h:"みます",r:"ver/olhar"},
+    {h:"ききます",r:"escutar/ouvir"},
+    {h:"よみます",r:"ler"},
+    {h:"かきます",r:"escrever/pintar/desenhar"},
+    {h:"かいます",r:"comprar"},
+    {h:"しゃしん　を　とります",r:"tirar foto"},
+    {h:"します",r:"fazer"},
+    {h:"ばいとします",r:"trabalho part time"},
+    {h:"あいます",r:"encontrar"},
+    {h:"あります",r:"ter"},
+    {h:"ともだち　に　あいます",r:"encontrar um amigo"},
+
+    {h:"ごはん",r:"refeição"},
+    {h:"あさごはん",r:"pequeno almoço"},
+    {h:"ひるごはん",r:"almoço"},
+    {h:"ばんごはん",r:"jantar"},
+    {h:"パン",r:"pão"},
+    {h:"たまご",r:"ovo"},
+    {h:"さかな",r:"peixe"},
+    {h:"くだもの",r:"fruta"},
+    {h:"みず",r:"agua"},
+    {h:"ぎゅうにゅう　｜　ミルク",r:"leite"},
+    {h:"ジュース",r:"sumo"},
+    {h:"ビール",r:"cerveja"},
+    {h:"それから",r:"depois disso.../ e depois..."},
+    {h:"それでは",r:"então..."},
+    {h:"ちょっと",r:"há um pouco/um pouco"},
+
+    {h:"ときどき",r:"às vezes"},
+    {h:"いつも",r:"sempre/normalmente"},
+    {h:"いっしょに",r:"juntos"},
+    {h:"いいですね",r:"isso é fixe/bom!"},
+    {h:"ええ",r:"sim"},
+    {h:"なんですか",r:"sim?/que foi?"},
+    {h:"わかりました",r:"tou a ver..."},
+    {h:"じゃ、また",r:"até amanhã"},
+]
+
+var storeTemp6=[];
+
+var store7=[
+    {h:"きります",r:"cortar/fatiar"},
+    {h:"もらいます",r:"receber"},
+    {h:"あげます",r:"dar"},
+    {h:"おくります",r:"enviar"},
+    {h:"かします",r:"emprestar"},
+    {h:"かります",r:"pedir emprestado"},
+    {h:"おしえます",r:"ensinar"},
+    {h:"ならいます",r:"aprender"},
+    {h:"でんわ　を　かけます",r:"fazer (chamada telefonica)"},
+
+    {h:"はし",r:"chostick"},
+    {h:"スプーン",r:"spoon"},
+    {h:"ナイフ",r:"knife"},
+    {h:"フォーク",r:"folk"},
+    {h:"はさみ",r:"tesoura"},
+    {h:"ファクシ",r:"fax"},
+    {h:"ワープロ",r:"maquina de escrever"},
+    {h:"パソコン",r:"personal computer"},
+    {h:"パンチ",r:"punch"},
+    {h:"ホッチキス",r:"agrafador"},
+    {h:"セロテープ",r:"scotch tape(fita adesiva)"},
+    {h:"けしゴム",r:"borracha"},
+    {h:"シャツ",r:"shirt"},
+    {h:"プレゼント",r:"present"},
+    {h:"にもつ",r:"bagagem/encomenda(parcel)"},
+    {h:"クリスマス",r:"Natal"},
+
+    {h:"もう",r:"já"},
+    {h:"まだ",r:"ainda não"},
+    {h:"これから",r:"a partir de agora/em breve"},
+    {h:"すてきですね",r:"que belo ..."},
+    {h:"ごめんください",r:"desculpe, posso entrar? (expressao usada pelo visitante)"},
+    {h:"いらしゃい",r:"que bom teres vindo. (Welcome)"},
+    {h:"どうぞおあがりくい",r:"Entra! (Please Come in)"},
+    {h:"しつれいします",r:"posso?/perdão (usado com medo de incomodar)"},
+    {h:"（coffe　は）いかがですか",r:"não quer café? gostaria de...? (usado para oferecer algo)"},//-----------------
+
+    {h:"りょこう　（おします）",r:"fazer uma trip/tour"},
+    {h:"おみやげ",r:"souvenir/lembrança"},
+]
+
+var storeTemp7=[];
+
+var storeCaderno=[
+    // {h:"あい",r:"amor"},
+    // {h:"かい",r:"concha"},
+    // {h:"き",r:"arvore"},
+    // {h:"かき",r:"diospiro"},
+    // {h:"あか",r:"vermelho"},
+    // {h:"えき",r:"estação de comboio"},
+    // {h:"おく",r:"colocar"},
+    // {h:"かく",r:"escrever"},
+    // {h:"いけ",r:"lagoa"},
+    // {h:"こい",r:"peixe"},
+    // {h:"しか",r:"viado"},
+    // {h:"あし",r:"perna"},
+    // {h:"くし",r:"pente"},
+    // {h:"せかい",r:"mundo"},
+    // {h:"いし",r:"pedra"},
+    // {h:"motto yukkuri",r:"mais devagar"},
+    // {h:"かた",r:"ombro"},
+    // {h:"たいこ",r:"tambor"},
+    // {h:"ち",r:"sangue"},
+    // {h:"ちかい",r:"perto"},
+    // {h:"くち",r:"boca"},
+    // {h:"つき",r:"lua"},
+    // {h:"つくえ",r:"secretaria"},
+    // {h:"くつ",r:"sapatos"},
+    // {h:"て",r:"mao"},
+    // {h:"ちかてつ",r:"metro"},
+    // {h:"と",r:"porta"},
+    // {h:"そと",r:"fora"},
+    // {h:"なか",r:"dentro"},
+    // {h:"あな",r:"buraco"},
+    // {h:"にく",r:"carne"},
+    // {h:"くに",r:"país"},
+    // {h:"なに",r:"o quê?"},
+    // {h:"えいが",r:"cinema"},
+    // {h:"てき",r:"inimigo"},
+    // {h:"きぬ",r:"seda"},
+    // {h:"ねつ",r:"febre"},
+    // {h:"ぬの",r:"tecido/pano"},
+    // {h:"は",r:"dente"},
+    // {h:"はは",r:"minha mãe"},
+    // {h:"はな",r:"nariz/flores"},
+    // {h:"はね",r:"asas"},
+    // {h:"あさひ",r:"sol de manhã"},
+    // {h:"ひこうき",r:"avião"},
+    // {h:"ふね",r:"barco"},
+    // {h:"ひふ",r:"pele(de pessoas e não de animais)"},
+    // {h:"へい",r:"parede"},
+    // {h:"へび",r:"cobra"},
+    // {h:"えび",r:"camarão"},
+    // {h:"ほし",r:"estrela"},
+    // {h:"ほそい",r:"fino(adjetivo)"},
+
+    // {h:"いま",r:"agora"},
+    // {h:"みみ",r:"orelha"},
+    // {h:"かみ",r:"deus/papel/cabelo"},
+    // {h:"みなみ",r:"sul"},
+    // {h:"むし",r:"insecto"},
+    // {h:"むかし",r:"antigamente"},
+    // {h:"むかしむかし",r:"era uma vez..."},
+    // {h:"め",r:"olhos"},
+    // {h:"めがね",r:"oculos"},
+    // {h:"あめ",r:"chuva"},
+    // {h:"もも",r:"pessego"},
+    // {h:"くも",r:"aranha/nuvem"},
+    // {h:"へや",r:"quarto"},
+    // {h:"やね",r:"telhado"},
+    // {h:"やま",r:"monte"},
+    // {h:"ゆめ",r:"sonho"},
+    // {h:"ゆき",r:"neve"},
+    // {h:"よこ",r:"lado"},
+    // {h:"よみます",r:"ler"},
+    // {h:"じてんしゃ",r:"bicicleta"},
+    // {h:"ぼうし",r:"chapeu"},
+    // {h:"ずぼん",r:"calças"},
+    // {h:"さいふ",r:"carteira"},
+    // {h:"ゆびんきょく",r:"correios"},
+    // {h:"こんびに",r:"loja de conveniencia"},
+
+    // {h:"らいおん",r:"leão"},
+    // {h:"そら",r:"céu"},
+    // {h:"くじら",r:"baleia"},
+    // {h:"りんご",r:"maçã"},
+    // {h:"くり",r:"castanha"},
+    // {h:"くるま",r:"carro"},
+    // {h:"はる",r:"primavera"},
+    // {h:"れもん",r:"limão"},
+    // {h:"ほうれんそう",r:"espinafre"},
+    // {h:"くろ",r:"preto"},
+    // {h:"ろうそく",r:"vela"},
+    // {h:"ばら",r:"rosa"},
+    // {h:"れきし",r:"historia"},
+
+    // {h:"こうちゃ",r:"cha preto"},
+    // {h:"うちゅう",r:"universo"},
+    // {h:"ちゅうしゃ",r:"injecao"},
+    // {h:"ゆうがた",r:"fim da tarde| crepusculo"},
+    // {h:"おおきい",r:"grande"},
+    // {h:"すい　ようび",r:"4 feira"},
+    // {h:"くうき",r:"ar"},
+    // {h:"がっき",r:"instrumento musical"},
+    // {h:"はっけん",r:"descobrimento"},
+    // {h:"あさって",r:"depois de amanha"},
+
+    // {h:"きって",r:"selos postais"},
+    // {h:"さっか",r:"escritor"},
+    // {h:"せっけん",r:"sabao"},
+    // {h:"にっき",r:"diario pessoal"},
+    // {h:"きゃく",r:"hospede"},
+    // {h:"しゃしん",r:"fotografia"},
+    // {h:"ばしょ",r:"lugar"},
+    // {h:"ひょう",r:"pantera"},
+    // {h:"しゅみ",r:"hobby"},
+    // {h:"ちょうちょう",r:"borboleta"},
+    // {h:"しょうしょう",r:"mais ou menos|um pouquinho"},
+
+    // {h:"できごと",r:"evento"},
+    // {h:"がんばる",r:"try hard"},
+    // {h:"じだい",r:"periodo historico"},
+    // {h:"ばんぱく",r:"expo"},
+    // {h:"かば",r:"hipopotamo"},
+    // {h:"もんだい",r:"problema"},
+    // {h:"しつもん",r:"pergunta"},
+    // {h:"がいこくじん",r:"estrangeiro"},
+    // {h:"しんぱい",r:"preocupação"},
+    // {h:"きょれん",r:"last year"},
+    // {h:"しゃかい",r:"sociedade"},
+    // {h:"きんじょ",r:"vizinho"},
+    // {h:"みんしゅしゅぎ",r:"democracia"},
+    // {h:"りょかん",r:"japanese inn"},
+
+    // {h:"かいわ",r:"conversa"},
+    // {h:"きもち",r:"sentimento"},
+    // {h:"とんぼ",r:"libélula"},
+    // {h:"わかりますか",r:"percebeu?"},
+    // {h:"にわ",r:"jardim"},
+    // {h:"がっこう",r:"escola"},
+    // {h:"こうえん",r:"parque"},
+    // {h:"やさい",r:"legumes"},
+    // {h:"きょか",r:"permissão"},
+    // {h:"でんしゃ",r:"comboio"},
+    // {h:"じんじゃ",r:"templo"},
+    // {h:"ちょきん",r:"poupanças"},
+
+    // {h:"いっか",r:"uma vez/once"},
+    // {h:"きっさてん",r:"cofee shop"},
+    // {h:"ずっと",r:"durante todo esse tempo/all along"},
+    // {h:"しっぱ",r:"cauda"},
+    // {h:"あんない",r:"guia"},
+    // {h:"いっしょ",r:"junto"},
+    // {h:"もっと",r:"mais"},
+    // {h:"きっぷ",r:"bilhete"},
+    // {h:"ざんねん",r:"lamentação"},
+
+    // {h:"へいわ",r:"paz"},
+    // {h:"そうだん",r:"consultation"},
+    // {h:"すうじ",r:"numero"},
+    // {h:"つうやく",r:"interprete"},
+    // {h:"おかあさん",r:"mãe(de outro)"},
+    // {h:"はは",r:"minha mãe"},
+    // {h:"おとおさん",r:"pai(de outro)"},
+    // {h:"ちち",r:"meu pai"},
+    // {h:"おにいさん",r:"irmao mais velho"},
+    // {h:"おとうと",r:"irmao mais novo"},
+    // {h:"おねえさん",r:"irma mais velha"},
+    // {h:"いもうと",r:"irma mais nova"},
+    // {h:"おじいさん",r:"avô"},
+    // {h:"おじさん",r:"tio/meu senhor"},
+    // {h:"おばあさん",r:"avó"},
+    // {h:"おばさん",r:"tia/minha senhora"},
+    // {h:"おかね",r:"dinheiro"},
+
+    //from genki
+
+    // {h:"りゅうがくせい",r:"estudante internacional"},
+    // {h:"だいがくいんせい",r:"graduate student"},
+    // {h:"だいがくせい",r:"college student"},
+    // {h:"ねんせい",r:"ano da escola"},
+    // {h:"こうこう",r:"escola secundaria"},
+    // {h:"こうこうせい",r:"estudante do secundario"},
+    // {h:"せんこう",r:"major"},
+
+    // {h:"かんごし",r:"enfermeira"},
+    // {h:"しゅふ",r:"mulher a dias"},
+    // {h:"べんごし",r:"advogado"},
+    // {h:"[お]しごと",r:"ocupação/profissão"},
+    // {h:"けいざい",r:"economia (estudo)"},
+    // {h:"せいじ",r:"politica (estudo)"},
+    // {h:"びじねし",r:"negocios (estudo)"},
+    // {h:"ぶんがく",r:"literatura (estudo)"},
+    // {h:"せいぶつがく",r:"biologia (estudo)"},
+
+
+    //  {h:"にほんご　の　きそ",r:"fundamentos de japonês"},
+    //  {h:"ねんがじょう",r:"cartão de ano novo"},
+    //  {h:"おつかれさま　でした",r:"Bom trabalho!(Good job!)"},
+    //  {h:"こたえ",r:"respostas"},
+    //  {h:"ぶん",r:"frase"},     
+    //  {h:"こくばん",r:"quadro a giz/blackboard"},
+    //  {h:"カーテン",r:"curtina"},
+    //  {h:"まど",r:"janela"},
+    //  {h:"ゆっくり　いって　ください",r:"por favor diga mais devagar."},
+    //  {h:"もういちど　いって　ください",r:"por favor diga outra vez."},
+    //  {h:"きいて　ください",r:"por favor ouve/pergunte."},
+    //  {h:"おんがく",r:"musica"},
+    //  {h:"しゅうまつ",r:"fim-de-semana"},
+    //  {h:"…ごろ",r:"por volta das..."},
+    //  {h:"はやい",r:"cedo/early"},
+    //  {h:"あまり",r:"not much"},
+    //  {h:"ぜんぜん",r:"not at all"},
+    //  {h:"たいてい",r:"usually"},
+    //  {h:"よく",r:"often;much"},
+    //  {h:"でも",r:"but"},
+    //  {h:"どうですか",r:"how about...?how is...?"},   
+    //  {h:"おふろ",r:"banheira japonesa"}, 
+
+]
+
+var storeCadernoTemp=[];
+
+var storeVerbos=[
+    {h:"きります",r:"cortar/fatiar"},
+    {h:"もらいます",r:"receber"},
+    {h:"あげます",r:"dar"},
+    {h:"おくります",r:"enviar"},
+    {h:"かします",r:"emprestar"},
+    {h:"かります",r:"pedir emprestado"},
+    {h:"おしえます",r:"ensinar"},
+    {h:"ならいます",r:"aprender"},
+    {h:"でんわ　を　かけます",r:"fazer (chamada telefonica)"},
+    {h:"あるきます",r:"Andar"},
+    {h:"ひらきます",r:"abrir"},
+    {h:"つくります",r:"cozinhar/construir/criar"},
+    {h:"はじまります",r:"começar"},
+    {h:"かかります",r:"durar/demorar(4 horas)"},
+    {h:"はいります",r:"entrar"}
+];
+
+var storeVerbosTemp=[];
+
+
+var storeAdverbios=[
+{h:"adverb1",r:"adverb 1"},
+{h:"adverb2",r:"adverb 2"},
+];
+
+var storeAdverbiosTemp=[];
+
+
+var storeComida=[
+    {h:"ていしょく",r:"refeição do dia"},
+    //comidas:
+    {h:"たべもの",r:"comida"},
+    {h:"こめ",r:"arroz"},
+    //vegetais
+    {h:"きゅうり",r:"pepino"},
+    {h:"トマト",r:"tomate"},
+    {h:"なす",r:"berinjela"},
+    {h:"まめ",r:"feijao"},
+    {h:"キャベツ",r:"couve repolho/cabbage"},
+    {h:"ねぎ",r:"cebolinha"},
+    {h:"たまねぎ",r:"cebola"},
+    {h:"ほうれんそう",r:"espinafre"},
+    {h:"レタス",r:"alface/lettuce"},
+    {h:"はくさい",r:"hortalica/couve comprida"},
+    {h:"じゃがいも",r:"batata"},
+    {h:"だいこん",r:"nabo"},
+    {h:"にんじん",r:"cenoura"},
+    //frutas
+    {h:"いちご",r:"morango"},
+    {h:"もも",r:"pêssego"},
+    {h:"すいか",r:"melancia"},
+    {h:"ぶどう",r:"uva"},
+    {h:"なじ",r:"pêra"},
+    {h:"かき",r:"diospiro"},
+    {h:"みかん",r:"tangerina"},
+    {h:"りんご",r:"maçã"},
+    {h:"バナナ",r:"banana"},
+    //carnes
+    {h:"ぎゅうにく",r:"carne de vaca"},
+    {h:"とりにく",r:"frango"},
+    {h:"ぶたにく",r:"carne de porco"},
+    {h:"ソーセージ",r:"salshicha/saussage"},
+    {h:"ハム",r:"presunto/ham"},
+    //peixe
+    {h:"あじあじ",r:"cavala"},
+    {h:"いわし",r:"sardinha"},
+    {h:"さけ",r:"salmão"},
+    {h:"まぐろ",r:"atum"},
+    {h:"たい",r:"pargo"},
+    {h:"たら",r:"bacalhau"},
+    {h:"えび",r:"camarão"},
+    {h:"かに",r:"caranguejo"},
+    {h:"いか",r:"lula"},
+    {h:"たこ",r:"polvo"},
+    {h:"かい",r:"mariscos"},
+];
+
+var storeComidaTemp=[];
+
+var storeLearning=[
+    {h:"ていしょく",r:"refeição do dia"},
+    {h:"おふろ　に　はいります",r:"entrar na banheira"},
+    {h:"たべもの",r:"comida"},
+    {h:"こめ",r:"arroz"},
+    {h:"きゅうり",r:"pepino"},
+    {h:"トマト",r:"tomate"},
+    {h:"なす",r:"berinjela"},
+    {h:"まめ",r:"feijao"},
+    {h:"キャベツ",r:"couve repolho/cabbage"},
+    {h:"ねぎ",r:"cebolinha"},
+    {h:"たまねぎ",r:"cebola"},
+    {h:"ほうれんそう",r:"espinafre"},
+    {h:"レタス",r:"alface/lettuce"},
+    {h:"はくさい",r:"hortalica/couve comprida"},
+    {h:"じゃがいも",r:"batata"},
+    {h:"だいこん",r:"nabo"},
+    {h:"にんじん",r:"cenoura"},
+
+    {h:"いちご",r:"morango"},
+    {h:"もも",r:"pêssego"},
+    {h:"すいか",r:"melancia"},
+    {h:"ぶどう",r:"uva"},
+    {h:"なじ",r:"pêra"},
+    {h:"かき",r:"diospiro"},
+    {h:"みかん",r:"tangerina"},
+    {h:"りんご",r:"maçã"},
+    {h:"バナナ",r:"banana"},
+];
+
+var storeLearningTemp=[];
+
+var currentlyLearningStore=[{
+    "store": storeLearning,
+    "temp":storeLearningTemp
+}]
+
+var storeLessons = [{
+    "store": storeCaderno,
+    "temp":storeCadernoTemp
+},
+{
+    "store": store,
+    "temp":storeTemp
+},
+{
+    "store": store2,
+    "temp":storeTemp2
+},
+{
+    "store": store3,
+    "temp":storeTemp3
+},
+{
+    "store": store4,
+    "temp":storeTemp4
+},
+{
+    "store": store5,
+    "temp":storeTemp5
+},
+{
+    "store": store6,
+    "temp":storeTemp6
+},
+{
+    "store": store7,
+    "temp":storeTemp7
+}]
+
+var verbStore=[{
+    "store": storeVerbos,
+    "temp":storeVerbosTemp
+}]
+
+var adverbsStore=[{
+    "store": storeAdverbios,
+    "temp":storeAdverbiosTemp
+}]
+
+var foodStore=[{
+    "store": storeComida,
+    "temp":storeComidaTemp
+}]
+
+var groupedStores=[
+    currentlyLearningStore,
+    storeLessons,
+    verbStore,
+    adverbsStore,
+    foodStore
+];
+
+
+</script>
+
+
+
