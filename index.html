@@ -33,9 +33,11 @@
 
     (ou clicar na seta -> do teclado)
     <br/>
-    <button style="display: inline-block;" onclick="changeLevel()">Change Level</button>
+    <div style="display: inline-block;" id="levelBtns">
+        <button onclick="changeLevel(1)">1</button>
+    </div>
     &nbsp;
-    <p style="display: inline-block;font-weight: bold;" id="level">1</p>
+    <p style="display: inline-block;font-weight: bold;" id="level">Level 1</p>
 
 </div>
 
@@ -48,6 +50,7 @@ var hiragana = document.getElementById("hiragana");
 var romanji = document.getElementById("romanji");
 var title = document.getElementById("title");
 var lvlDisplay = document.getElementById("level");
+var levelsBtns = document.getElementById("levelBtns");
 var wordCounter = document.getElementById("wordsCounter");
 
 var letterToShow;
@@ -87,12 +90,12 @@ function next(){
     else alert("fim");
 }
 
-function changeLevel(){
-    currentStore++;
-    if(currentStore>groupedStores[currentGroupedStore].length){
-        currentStore=1;
-    }
-    lvlDisplay.innerHTML = currentStore;
+function changeLevel(val){
+    currentStore = val;
+    // if(currentStore>groupedStores[currentGroupedStore].length){
+    //     currentStore=1;
+    // }
+    lvlDisplay.innerHTML = "Level "+currentStore;
 }
 
 function onSwap(){
@@ -116,7 +119,11 @@ function onReset(){
 function changeGroup(){    
     currentGroupedStore = parseInt(document.getElementById("group").value);
     currentStore=1;
-    lvlDisplay.innerHTML = currentStore;
+    levelsBtns.innerHTML = "";
+    for(var i=0; i<groupedStores[currentGroupedStore].length;i++){
+        levelsBtns.innerHTML +="<button onclick='changeLevel("+(i+1)+")'>"+(i+1)+"</button>";
+    }
+    lvlDisplay.innerHTML = "Level "+currentStore;
 }
 
 var store=[
