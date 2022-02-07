@@ -10,6 +10,7 @@
         <option value="2">Verbos</option>
         <option value="3">Advérbios</option>
         <option value="4">Comida</option>
+        <option value="5">Outro</option>
     </select>
 </div>
 
@@ -92,9 +93,6 @@ function next(){
 
 function changeLevel(val){
     currentStore = val;
-    // if(currentStore>groupedStores[currentGroupedStore].length){
-    //     currentStore=1;
-    // }
     lvlDisplay.innerHTML = "Level "+currentStore;
 }
 
@@ -807,10 +805,6 @@ var currentlyLearningStore=[{
 }]
 
 var storeLessons = [
-    {
-    "store": storeCaderno,
-    "temp":storeCadernoTemp
-},
 {
     "store": store,
     "temp":storeTemp
@@ -855,12 +849,18 @@ var foodStore=[{
     "temp":storeComidaTemp
 }]
 
+var otherStore=[{
+    "store": storeCaderno,
+    "temp":storeCadernoTemp
+}]
+
 var groupedStores=[
     currentlyLearningStore,
     storeLessons,
     verbStore,
     adverbsStore,
-    foodStore
+    foodStore,
+    otherStore
 ];
 
 
